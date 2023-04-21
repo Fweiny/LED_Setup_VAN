@@ -2,7 +2,7 @@ import time
 from machine import Pin, PWM
 from time import sleep
 
-# Designed by Fweiny TEST Branch
+# Designed by Fweiny TEST 
 
 # LED_F settings
 frequency = 800
