@@ -3,9 +3,45 @@ from machine import Pin, PWM
 from time import sleep
 
 #functions
+def Btn_function(LED,btn,btn_on_time):          
+                global doppelklick
+                global status_F,status_M, status_B
+                #shutting on/off
+                if doppelklick is False:
+                    if (Status_dic[btn] is False) & (btn_on_time == 0):
+                        print(f'Shut On - Single - {btn}')
+                        #duty_cycle = duty_cycle_start
+                        LED.duty(duty_cycle)
+                        Status_dic[btn] = True
+                    elif (Status_dic[btn] is True) & (btn_on_time == 0):
+                        print(f'Shut Off - Single-  {btn}')
+                        LED.duty(0)
+                        Status_dic[btn] = False
+                else:
+                    doppelklick = False
+                    if Status_dic[btn] is True:
+                        print("All on")
+                        status_F = True
+                        status_B = True
+                        status_M = True
+                        LED_F.duty(duty_cycle)
+                        LED_M.duty(duty_cycle)
+                        LED_B.duty(duty_cycle)
+                    else:
+                        print("All off")
+                        status_F = False
+                        status_B = False
+                        status_M = False
+
+                        LED_F.duty(0)
+                        LED_M.duty(0)
+                        LED_B.duty(0)
+
+
+        
 
 def get_timestamp():
-    Seconds =     	    time.localtime()[5]
+    Seconds =   time.localtime()[5]
     Minutes =   time.localtime()[4] * 60
     timestamp = Seconds + Minutes
     return timestamp
@@ -64,7 +100,7 @@ LED_F.duty(0)
 LED_M.duty(0)
 LED_B.duty(0)
 
-
+Status_dic ={'front':status_F, 'back':status_B,'mid':status_M}
 
 if __name__ == '__main__':
 
@@ -92,40 +128,8 @@ if __name__ == '__main__':
                     btn_count_F = 1
 
                 #print(f"{btn_count=}")
-                
 
-                #shutting on/off
-                if doppelklick is False:
-                    if (status_F is False) & (btn_on_time_F == 0):
-                        print('Shut On - Single - Front')
-                        #duty_cycle = duty_cycle_start
-                        LED_F.duty(duty_cycle)
-                        status_F = True
-                    elif (status_F is True) & (btn_on_time_F == 0):
-                        print('Shut Off - Single- Front')
-                        LED_F.duty(0)
-                        status_F = False
-                else:
-                    doppelklick = False
-                    if status_F is True:
-                        print("All on")
-                        status_F = True
-                        status_B = True
-                        status_M = True
-                    else:
-                        print("All off")
-                        status_F = False
-                        status_B = False
-                        status_M = False
-
-                        LED_F.duty(0)
-                        LED_M.duty(0)
-                        LED_B.duty(0)
-
-
-        
-
-
+            Btn_function(LED_F,"front",btn_on_time_F)
  
             # Dimmen ------------------------------------------
             # print(f'{btn_on_time_F=}')
@@ -141,12 +145,15 @@ if __name__ == '__main__':
                 # Change duty 
                 duty_cycle = duty_cycle - step
 
-                if doppelklick == True:
+                if status_F is True:
                     LED_F.duty(duty_cycle)
+
+                if status_M is True:
                     LED_M.duty(duty_cycle)
+
+                if status_B is True:
                     LED_B.duty(duty_cycle)
-                else:
-                    LED_F.duty(duty_cycle)
+
 
                 sleep(dimm_sleep_time)
 
