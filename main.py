@@ -3,42 +3,43 @@ from machine import Pin, PWM
 from time import sleep
 
 #functions
-def Btn_function(LED,btn,btn_on_time):          
-                global doppelklick
-                global status_F,status_M, status_B
-                #shutting on/off
-                if doppelklick is False:
-                    if (Status_dic[btn] is False) & (btn_on_time == 0):
-                        print(f'Shut On - Single - {btn}')
-                        #duty_cycle = duty_cycle_start
-                        LED.duty(duty_cycle)
-                        Status_dic[btn] = True
-                    elif (Status_dic[btn] is True) & (btn_on_time == 0):
-                        print(f'Shut Off - Single-  {btn}')
-                        LED.duty(0)
-                        Status_dic[btn] = False
-                else:
-                    doppelklick = False
-                    if Status_dic[btn] is True:
-                        print("All on")
-                        status_F = True
-                        status_B = True
-                        status_M = True
-                        LED_F.duty(duty_cycle)
-                        LED_M.duty(duty_cycle)
-                        LED_B.duty(duty_cycle)
-                    else:
-                        print("All off")
-                        status_F = False
-                        status_B = False
-                        status_M = False
+def Btn_function(LED,btn_on_time,btn_status='status_F'):          
+    global doppelklick
+    global status_F,status_M, status_B
 
-                        LED_F.duty(0)
-                        LED_M.duty(0)
-                        LED_B.duty(0)
+    #shutting on/off
+    if doppelklick is False:
+        if (btn_status is False) & (btn_on_time == 0):
+            print(f'Shut On - Single')
+            #duty_cycle = duty_cycle_start
+            LED.duty(duty_cycle)
+            btn_status = True
+        elif (btn_status is True) & (btn_on_time == 0):
+            print(f'Shut Off - Single')
+            LED.duty(0)
+            btn_status = False
+    else:
+        doppelklick = False
+        if btn_status is True:
+            print("All on")
+            status_F = True
+            status_B = True
+            status_M = True
+            LED_F.duty(duty_cycle)
+            LED_M.duty(duty_cycle)
+            LED_B.duty(duty_cycle)
+        else:
+            print("All off")
+            status_F = False
+            status_B = False
+            status_M = False
 
+            LED_F.duty(0)
+            LED_M.duty(0)
+            LED_B.duty(0)
+   
+    return btn_status, status_F, status_M, status_B
 
-        
 
 def get_timestamp():
     Seconds =   time.localtime()[5]
@@ -46,6 +47,30 @@ def get_timestamp():
     timestamp = Seconds + Minutes
     return timestamp
 
+def dimmen():
+    global duty_cycle,step
+    print(f'Dimmen from {duty_cycle}% to {(duty_cycle-step)}')
+    # Change duty 
+    duty_cycle = duty_cycle - step
+
+    if status_F is True:
+        LED_F.duty(duty_cycle)
+
+    if status_M is True:
+        LED_M.duty(duty_cycle)
+
+    if status_B is True:
+        LED_B.duty(duty_cycle)
+
+    sleep(dimm_sleep_time)
+
+    if duty_cycle > duty_max: #ensure no issue with max duty
+        duty_cycle = duty_max
+
+    if (duty_cycle == abs(step)) or (duty_cycle == duty_max): # Flip at 0 or 100%
+        sleep(1)
+        step = - step
+        print('return')
 
 
 # LED_F settings
@@ -115,9 +140,7 @@ if __name__ == '__main__':
 
                 # calc delta time
                 t_delta = timestamp_F - timestamp_prev_F
-                #print(f'{timestamp_prev=}')
                 #print(f'{t_delta=}')
-
 
                 # count number of clicks (depending on time delta)
                 if (t_delta <= doppelklick_timer) and (btn_count_F == 1):
@@ -129,41 +152,16 @@ if __name__ == '__main__':
 
                 #print(f"{btn_count=}")
 
-            Btn_function(LED_F,"front",btn_on_time_F)
+            #Button fuctnion
+            Btn_function(LED_F,btn_on_time_F,btn_status=status_F)
  
             # Dimmen ------------------------------------------
-            # print(f'{btn_on_time_F=}')
+            if (btn_on_time_F >= 100) and (status_F == True):
+                dimmen()
+
             btn_on_time_F = btn_on_time_F + 1   # increasing depending on Actuator on time
             sleep(sleep_time)                   # delay 
             off_count_F = False                 # ensuring on time
-
-
-            if (btn_on_time_F >= 200) and (status_F == True):
-                print(f'Dimmen from {duty_cycle}% to {(duty_cycle-step)}')
-                # print(duty_cycle)
-
-                # Change duty 
-                duty_cycle = duty_cycle - step
-
-                if status_F is True:
-                    LED_F.duty(duty_cycle)
-
-                if status_M is True:
-                    LED_M.duty(duty_cycle)
-
-                if status_B is True:
-                    LED_B.duty(duty_cycle)
-
-
-                sleep(dimm_sleep_time)
-
-                if duty_cycle > duty_max: #ensure no issue with max duty
-                    duty_cycle = duty_max
-
-                if (duty_cycle == abs(step)) or (duty_cycle == duty_max): # Flip at 0 or 100%
-                    sleep(1)
-                    step = - step
-                    print('return')
         else:
             #reset dimm counter 
             btn_on_time_F = 0
