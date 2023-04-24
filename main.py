@@ -130,18 +130,24 @@ if __name__ == '__main__':
  
             # Dimmen ------------------------------------------
             # print(f'{btn_on_time_F=}')
-            btn_on_time_F = btn_on_time_F + 1
-            sleep(sleep_time)
-            off_count = False
+            btn_on_time_F = btn_on_time_F + 1   #increasing depending on Actuator on time
+            sleep(sleep_time)                   #delay 
+            off_count_F = False                   # esusing on time
 
 
             if (btn_on_time_F >= 200) and (status_F == True):
-                #print('Dimmen')
-                print(duty_cycle)
-                
-                
+                print(f'Dimmen from {duty_cycle}% to {(duty_cycle-step)}')
+                # print(duty_cycle)
+
+                # Change duty 
                 duty_cycle = duty_cycle - step
-                LED_F.duty(duty_cycle)
+
+                if doppelklick == True:
+                    LED_F.duty(duty_cycle)
+                    LED_M.duty(duty_cycle)
+                    LED_B.duty(duty_cycle)
+                else:
+                    LED_F.duty(duty_cycle)
 
                 sleep(dimm_sleep_time)
 
