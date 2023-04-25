@@ -125,8 +125,11 @@ LED_F.duty(0)
 LED_M.duty(0)
 LED_B.duty(0)
 
+
+
 Status_dic ={'front':status_F, 'back':status_B,'mid':status_M}
 
+#main
 if __name__ == '__main__':
 
 
