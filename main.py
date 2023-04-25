@@ -3,24 +3,23 @@ from machine import Pin, PWM
 from time import sleep
 
 #functions
-def Btn_function(LED,btn_on_time,btn_status='status_F'):          
-    global doppelklick
+def Btn_function(LED,btn_on_time):          
+    global doppelklick, duty_cycle
     global status_F,status_M, status_B
 
     #shutting on/off
     if doppelklick is False:
-        if (btn_status is False) & (btn_on_time == 0):
+        if (LED.duty() is 0) & (btn_on_time == 0):
             print(f'Shut On - Single')
             #duty_cycle = duty_cycle_start
             LED.duty(duty_cycle)
-            btn_status = True
-        elif (btn_status is True) & (btn_on_time == 0):
+        elif (duty_cycle >0) & (btn_on_time == 0):
             print(f'Shut Off - Single')
             LED.duty(0)
-            btn_status = False
+            
     else:
         doppelklick = False
-        if btn_status is True:
+        if duty_cycle > 0:
             print("All on")
             status_F = True
             status_B = True
@@ -38,7 +37,7 @@ def Btn_function(LED,btn_on_time,btn_status='status_F'):
             LED_M.duty(0)
             LED_B.duty(0)
    
-    return btn_status, status_F, status_M, status_B
+    return LED_B,LED_F,LED_M
 
 
 def get_timestamp():
@@ -53,13 +52,13 @@ def dimmen():
     # Change duty 
     duty_cycle = duty_cycle - step
 
-    if status_F is True:
+    if (duty_cycle >0):
         LED_F.duty(duty_cycle)
 
-    if status_M is True:
+    if (duty_cycle >0):
         LED_M.duty(duty_cycle)
 
-    if status_B is True:
+    if (duty_cycle >0):
         LED_B.duty(duty_cycle)
 
     sleep(dimm_sleep_time)
@@ -125,7 +124,6 @@ LED_F.duty(0)
 LED_M.duty(0)
 LED_B.duty(0)
 
-Status_dic ={'front':status_F, 'back':status_B,'mid':status_M}
 
 if __name__ == '__main__':
 
@@ -153,7 +151,7 @@ if __name__ == '__main__':
                 #print(f"{btn_count=}")
 
             #Button fuctnion
-            Btn_function(LED_F,btn_on_time_F,btn_status=status_F)
+            Btn_function(LED_F,btn_on_time_F)
  
             # Dimmen ------------------------------------------
             if (btn_on_time_F >= 100) and (status_F == True):
