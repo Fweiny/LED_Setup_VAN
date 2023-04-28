@@ -7,10 +7,12 @@ def Btn_function(LED,btn_on_time):
     global doppelklick, duty_cycle
     global status_F,status_M, status_B
 
+    #print(f'{LED.duty()=}')
+
     #shutting on/off
     if doppelklick is False:
-        if (LED.duty() is 0) & (btn_on_time == 0):
-            print(f'Shut On - Single')
+        if (LED.duty() == 0) & (btn_on_time == 0):
+            print(f'Shut On - Single ')
             #duty_cycle = duty_cycle_start
             LED.duty(duty_cycle)
         elif (duty_cycle >0) & (btn_on_time == 0):
@@ -85,7 +87,7 @@ duty_cycle_start = 800
 duty_max = 800
 
 #Button definition
-btn_F = Pin(34, Pin.IN, Pin.PULL_DOWN) # front 22
+btn_F = Pin(22, Pin.IN, Pin.PULL_DOWN) # front 22
 btn_M = Pin(19, Pin.IN, Pin.PULL_DOWN) # Mid 19
 btn_B = Pin(34, Pin.IN, Pin.PULL_DOWN) #bak 15
 
