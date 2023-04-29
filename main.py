@@ -194,7 +194,7 @@ if __name__ == '__main__':
             timestamp_prev_M = timestamp_M       # reset timer for new klick
 
         # Function Back button -> Synct with Mid
-        if btn_B.value() == 1:
+        if btn_M.value() == 1:
             if off_count_B is True:
                 print("---------------------")
                 step = abs(step)
