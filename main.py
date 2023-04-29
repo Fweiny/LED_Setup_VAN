@@ -89,7 +89,6 @@ doppelklick_timer = 1       # Break between klicks
 doppelklick = False         # Req. 
 
 # start timer - default
-t_delta = 10
 timestamp_prev_F = get_timestamp()
 timestamp_F = get_timestamp()
 btn_count_F = 0
@@ -107,10 +106,10 @@ LED_B.duty(0)
 
 if __name__ == '__main__':
     while True:
-
         if btn_F.value() == 1:
             if off_count_F is True:
                 print("---------------------")
+                step = abs(step)
                 timestamp_F = get_timestamp()  # get timestmap 
                 t_delta = timestamp_F - timestamp_prev_F # calc delta time
                 #print(f'{t_delta=}')
@@ -130,6 +129,8 @@ if __name__ == '__main__':
  
             # Dimmen ------------------------------------------
             if (btn_on_time_F >= 100):
+                if LED_F.duty()==0: #Case of off dimmen
+                    LED_F.duty(duty_cycle)
                 dimmen()
 
             btn_on_time_F = btn_on_time_F + 1   # increasing depending on Actuator on time  # noqa: E501
