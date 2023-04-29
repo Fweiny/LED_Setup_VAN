@@ -124,14 +124,16 @@ if __name__ == '__main__':
 
             #print(f"{btn_count=}")
 
-            #Button fuctnion
-            Btn_function(LED_F,btn_on_time_F)
- 
             # Dimmen ------------------------------------------
             if (btn_on_time_F >= 100):
                 if LED_F.duty()==0: #Case of off dimmen
                     LED_F.duty(duty_cycle)
                 dimmen()
+
+
+            #Button fuctnion
+            Btn_function(LED_F,btn_on_time_F)
+ 
 
             btn_on_time_F = btn_on_time_F + 1   # increasing depending on Actuator on time  # noqa: E501
             off_count_F = False                 # ensuring on time
