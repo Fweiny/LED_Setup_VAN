@@ -10,34 +10,26 @@ def Btn_function(LED,btn_on_time):
     #print(f'{LED.duty()=}')
 
     #shutting on/off
-    if doppelklick is False:
-        if (LED.duty() == 0) & (btn_on_time == 0):
+    if (doppelklick is False) &  (btn_on_time == 0):
+        if (LED.duty() == 0):
             print(f'Shut On - Single ')
             #duty_cycle = duty_cycle_start
             LED.duty(duty_cycle)
-        elif (duty_cycle >0) & (btn_on_time == 0):
+        elif (duty_cycle >0):
             print(f'Shut Off - Single')
-            LED.duty(0)
-            
-    else:
+            LED.duty(0)      
+    elif (btn_on_time == 0):
         doppelklick = False
-        if duty_cycle > 0:
-            print("All on")
-            status_F = True
-            status_B = True
-            status_M = True
-            LED_F.duty(duty_cycle)
-            LED_M.duty(duty_cycle)
-            LED_B.duty(duty_cycle)
-        else:
+        if (LED.duty() == 0):
             print("All off")
-            status_F = False
-            status_B = False
-            status_M = False
-
             LED_F.duty(0)
             LED_M.duty(0)
             LED_B.duty(0)
+        else:
+            print("All on")
+            LED_F.duty(duty_cycle)
+            LED_M.duty(duty_cycle)
+            LED_B.duty(duty_cycle)
    
     return LED_B,LED_F,LED_M
 
@@ -72,7 +64,7 @@ def dimmen():
         sleep(1)
         step = - step
         print('return')
-
+    return duty_cycle, step
 
 # LED_F settings
 frequency = 800
@@ -156,7 +148,7 @@ if __name__ == '__main__':
             Btn_function(LED_F,btn_on_time_F)
  
             # Dimmen ------------------------------------------
-            if (btn_on_time_F >= 100) and (status_F == True):
+            if (btn_on_time_F >= 100):
                 dimmen()
 
             btn_on_time_F = btn_on_time_F + 1   # increasing depending on Actuator on time
