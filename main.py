@@ -82,7 +82,7 @@ LED_B.duty(0)
 #Button definition
 btn_F = Pin(22, Pin.IN, Pin.PULL_DOWN) # Front  Pin 22
 btn_M = Pin(19, Pin.IN, Pin.PULL_DOWN) # Mid    Pin 19
-btn_B = Pin(34, Pin.IN, Pin.PULL_DOWN) # Back   Pin 15
+btn_B = Pin(15, Pin.IN, Pin.PULL_DOWN) # Back   Pin 15
 
 
 # Dimm settings
