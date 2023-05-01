@@ -4,9 +4,10 @@ from time import sleep
 
 #functions
 def Btn_function(LED,btn_on_time, POS = "Front"):          
-    global doppelklick, duty_cycle
+    global doppelklick, duty_cycle, step
     #print(f'{LED.duty()=}')
 
+    
     #shutting on/off
     if (doppelklick is False) & (btn_on_time == 0):
         if (LED.duty() == 0):
@@ -29,7 +30,7 @@ def Btn_function(LED,btn_on_time, POS = "Front"):
             LED_M.duty(duty_cycle)
             LED_B.duty(duty_cycle)
    
-    return LED_B,LED_F,LED_M
+    return LED_B,LED_F,LED_M, step
 
 
 def get_timestamp():
@@ -44,6 +45,13 @@ def dimmen():
     # Change duty 
     duty_cycle = duty_cycle - step
 
+    if duty_cycle > duty_max: #ensure no issue with max duty
+        duty_cycle = duty_max
+
+    if duty_cycle < abs(step): #ensure no issue with min duty
+        duty_cycle = abs(step)
+
+
     if (LED_F.duty() > 0):
         LED_F.duty(duty_cycle)
 
@@ -55,8 +63,6 @@ def dimmen():
 
     sleep(dimm_sleep_time)
 
-    if duty_cycle > duty_max: #ensure no issue with max duty
-        duty_cycle = duty_max
 
     if (duty_cycle == abs(step)) or (duty_cycle == duty_max): # Flip at 0 or 100%
         sleep(1)
@@ -66,7 +72,7 @@ def dimmen():
 
 # LED_F settings
 frequency = 800
-duty_cycle = 800
+duty_cycle = 500
 duty_max = 800
 
 
@@ -194,7 +200,7 @@ if __name__ == '__main__':
             timestamp_prev_M = timestamp_M       # reset timer for new klick
 
         # Function Back button -> Synct with Mid
-        if btn_M.value() == 1:
+        if btn_B.value() == 1:
             if off_count_B is True:
                 print("---------------------")
                 step = abs(step)
@@ -220,7 +226,7 @@ if __name__ == '__main__':
 
 
             #Button fuctnion
-            Btn_function(LED_B,btn_on_time_B,POS= "Mid")
+            Btn_function(LED_B,btn_on_time_B,POS= "Back")
  
 
             btn_on_time_B = btn_on_time_B + 1   # increasing depending on Actuator on time  # noqa: E501
