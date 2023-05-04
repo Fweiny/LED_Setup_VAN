@@ -237,4 +237,47 @@ if __name__ == '__main__':
             off_count_B = True
             timestamp_prev_B = timestamp_B       # reset timer for new klick
 
-           
+                
+    
+        conn, addr = s.accept()
+        request = conn.recv(1024)
+        request = str(request)
+
+        # Parse the request to get the LED states
+        if 'led1=on' in request:
+            LED_F.duty(duty_cycle)
+            print('Lights on - Front')
+        elif 'led1=off' in request:
+            LED_F.duty(0)
+            print('Lights Off - Front')
+
+        if 'led2=on' in request:
+            LED_M.duty(duty_cycle)
+            print('Lights on - Mid')
+        elif 'led2=off' in request:
+            LED_M.duty(0)
+            print('Lights Off - Mid')
+
+        if 'led3=on' in request:
+            LED_B.duty(duty_cycle)
+            print('Lights on - Back')
+        elif 'led3=off' in request:
+            LED_B.duty(0)
+            print('Lights Off - Back')
+
+
+        if 'all=on' in request:
+            print("All on")
+            LED_F.duty(duty_cycle)
+            LED_M.duty(duty_cycle)
+            LED_B.duty(duty_cycle)
+        elif 'all=off' in request:
+            print("All OFF")
+            LED_F.duty(0)
+            LED_M.duty(0)
+            LED_B.duty(0)
+
+        # Send the HTML page
+        response = html
+        conn.send(response)
+        conn.close()
