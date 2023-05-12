@@ -4,6 +4,9 @@ import socket
 import machine
 import time
 
+
+
+
 print('---------------------')
 print('ESP - Boooting')
 print('---------------------')

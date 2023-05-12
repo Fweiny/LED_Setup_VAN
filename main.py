@@ -2,6 +2,23 @@ import time
 from machine import Pin, PWM
 from time import sleep
 
+import ssd1306
+from machine import Pin, I2C, SoftI2C
+import math
+
+# Setup oled
+# Set up OLED display
+i2c = SoftI2C(scl=Pin(22), sda=Pin(21))
+i2c.start()
+oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
+# Clear display
+oled.fill(0)
+oled.show()
+
+
+
+
 #functions
 def Btn_function(LED,btn_on_time, POS = "Front"):          
     global doppelklick, duty_cycle, step
@@ -12,20 +29,24 @@ def Btn_function(LED,btn_on_time, POS = "Front"):
     if (doppelklick is False) & (btn_on_time == 0):
         if (LED.duty() == 0):
             print(f'Lights on - {POS}')
+            Oled_disp('Lights on')
             #duty_cycle = duty_cycle_start
             LED.duty(duty_cycle)
         else:
             print(f'Lights off - {POS}')
+            Oled_disp(f'Lights off - {POS}')
             LED.duty(0)      
     elif (btn_on_time == 0):
         doppelklick = False
         if (LED.duty() == 0):
             print("All off")
+            Oled_disp("All off")
             LED_F.duty(0)
             LED_M.duty(0)
             LED_B.duty(0)
         else:
             print("All on")
+            Oled_disp("All on")
             LED_F.duty(duty_cycle)
             LED_M.duty(duty_cycle)
             LED_B.duty(duty_cycle)
@@ -42,6 +63,7 @@ def get_timestamp():
 def dimmen():
     global duty_cycle,step
     print(f'Dimmen from {duty_cycle}% to {(duty_cycle-step)}')
+    Oled_disp(f'Dimmen from {duty_cycle}% to {(duty_cycle-step)}')
     # Change duty 
     duty_cycle = duty_cycle - step
 
@@ -69,6 +91,14 @@ def dimmen():
         step = - step
         print('return')
     return duty_cycle, step
+
+
+def Oled_disp(text):
+    print(text)
+    # Clear graph area
+    oled.text(text,0,0,1)
+    oled.show()
+
 
 # LED_F settings
 frequency = 800
@@ -120,7 +150,7 @@ off_count_B= True
 btn_on_time_B= 0
 
 #LED_Dict={LED_F:"Front",LED_B:"Back",LED_M:"Mid"}
-
+Oled_disp("Start")
 
 if __name__ == '__main__':
     while True:
